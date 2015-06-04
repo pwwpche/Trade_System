@@ -359,20 +359,15 @@
                 </div>
 
                 <div class="span7">
+
+
                     <div class="widget widget-table action-table" style="overflow: visible">
                         <div class="widget-header"><i class="icon-th-list"></i>
                             <h3>Market</h3>
-                            <!--
+
                             <h3 class="btn-group">
-                                <a class="btn btn-small" data-toggle="dropdown" id="depth">Depth<span
-                                        class="caret"></span></a>
-                                <ul class="dropdown-menu" id="depthMenu">
-                                    <li><a class="selectDepth">5</a></li>
-                                    <li><a class="selectDepth">10</a></li>
-                                    <li><a class="selectDepth">20</a></li>
-                                </ul>
+                                <a class="btn btn-small" style="top:5px" data-toggle="dropdown" id="changeMarketOptions">Change Market Options</a>
                             </h3>
-                            -->
                         </div>
                         <!-- /widget-header -->
                         <div class="widget-content">
@@ -472,6 +467,10 @@
            $("#loadMarket").modal("hide");
            loadMarket();
        });
+
+        $("#changeMarketOptions").click(function(){
+            $("#loadMarket").modal("show");
+        });
 
         //Fill in broker when pressing button
         $(".brokerMenu").on('click', ".selectBroker", function () {
@@ -643,7 +642,8 @@
 
         function loadMarket() {
             $("#marketDepthTable").find('tbody').empty();
-
+            bidArray = [];
+            askArray = [];
             //TODO: For testing, remove it
 
             //Get max market depth by cookie
