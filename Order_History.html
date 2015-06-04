@@ -19,7 +19,7 @@
         <div class="container">
             <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span
                     class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
-            </a><a class="brand" href="Demo/index.html">Trader System </a>
+            </a><a class="brand" href="index.html">Trader System </a>
 
             <div class="nav-collapse">
                 <ul class="nav pull-right">
@@ -222,16 +222,16 @@
                 var obj = orderParsed[i];
                 $("#historyTable").find('tbody')
                         .append($('<tr>')
-                                .append($('<td>').text(obj.trade_id))
-                                .append($('<td>').text(obj.product))
+                                .append($('<td>').text(obj.id).attr("class", "orderID"))
+                                .append($('<td>').text(obj.productname))
                                 .append($('<td>').text(obj.broker))
                                 .append($('<td>').text(obj.period))
                                 .append($('<td>').text(obj.price).attr("class", "price"))
-                                .append($('<td>').text(obj.quantity))
-                                .append($('<td>').text(obj.dealer))
-                                .append($('<td>').text(obj.purchaser))
-                                .append($('<td>').text(obj.status))
-                                .append($('<td>').text(obj.time).attr("class", "time"))
+                                .append($('<td>').text(obj.amount))
+                                .append($('<td>').text(obj.initiatorType === "buy" ? obj.completionTrader : obj.initiatorTrader ))
+                                .append($('<td>').text(obj.initiatorType === "sell" ? obj.completionTrader : obj.initiatorTrader ))
+                                .append($('<td>').text("Deal"))
+                                .append($('<td>').text(obj.date_).attr("class", "time"))
                 );
             }
         }
@@ -241,8 +241,8 @@
             var timeList = [];
 
             for(var i = 0 ; i < orderParsed.length ; i++){
-                priceList.push(parseFloat(orderParsed[i].price) / parseInt(orderParsed[i].quantity));
-                timeList.push(orderParsed[i].time);
+                priceList.push(parseFloat(orderParsed[i].price) / parseInt(orderParsed[i].amount));
+                timeList.push(orderParsed[i].date_);
             }
             /*
             $(".price").each(function () {
