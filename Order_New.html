@@ -29,7 +29,7 @@
                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" id="userNameArea"><i
                             class="icon-user"></i> Marine <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">Logout</a></li>
+                            <li><a href="index.html">Logout</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -386,7 +386,7 @@
                             <h3>Market</h3>
 
                             <h3 class="btn-group">
-                                <a class="btn btn-small" style="top:5px" data-toggle="dropdown" id="changeMarketOptions">Product:Oil----Period:May30th----Broker:Broker1</a>
+                                <a class="btn btn-small" style="top:5px" data-toggle="dropdown" id="changeMarketOptions">Change Market Options</a>
                             </h3>
                         </div>
                         <!-- /widget-header -->
@@ -698,6 +698,7 @@
                     product: productName
                 },
                 success: function (data) {
+                    $("#changeMarketOptions").text("Product:" + productName);
                     askArray = data;
                     loadMarketContent();
                 },
@@ -796,13 +797,14 @@
         function loadProduct(){
             //Load Product list
             var brokerName = $("#brokerName").text();
+            var category = $("#categoryName").text();
             $.ajax({
                 type: "GET",
                 dataType: "json",
                 url: "http://localhost:8080/getProduct",
                 data: {
-                    brokerName : brokerName
-
+                    brokerName : brokerName,
+                    category : category
                 },
                 success: function (data) {
                     var arr = data;
@@ -874,13 +876,16 @@
         }
 
         function loadBroker(){
+            var username = getCookie("username");
             //Load broker list
             $.ajax({
                 //TODO : URL is not valid.
                 type: "GET",
                 dataType: "json",
                 url: "http://localhost:8080/getBroker",
-                data: {},
+                data: {
+                    username : username
+                },
                 success: function (data) {
                     var arr = data;
                     var len = arr.length;
@@ -907,7 +912,8 @@
                 type: "GET",
                 dataType: "json",
                 url: "http://localhost:8080/getIceberg",
-                data: {},
+                data: {
+                },
                 success: function (data) {
                     var arr = data;
                     var len = arr.length;

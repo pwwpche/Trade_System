@@ -26,9 +26,9 @@
                             class="icon-cog"></i> Setting </a>
                     </li>
                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" id="userNameArea"><i
-                            class="icon-user"></i> Fucking Marine <b class="caret"></b></a>
+                            class="icon-user"></i> <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">Logout</a></li>
+                            <li><a href="index.html">Logout</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -82,9 +82,7 @@
                                     <th> Quantity</th>
                                     <th> Action</th>
                                     <th> Dealer</th>
-                                    <th> Deal Trader</th>
                                     <th> Purchaser</th>
-                                    <th> Purchase Trader</th>
                                     <th> Status</th>
                                     <th> Time</th>
                                     <th class="td-actions">Cancel</th>
@@ -148,9 +146,7 @@
                                 <th> Quantity</th>
                                 <th> Action</th>
                                 <th> Dealer</th>
-                                <th> Deal Trader</th>
                                 <th> Purchaser</th>
-                                <th> Purchase Trader</th>
                                 <th> Status</th>
                                 <th> Time</th>
                             </tr>
@@ -211,23 +207,22 @@
 <script src="js/commonFunc.js"></script>
 <script>
     //TODO: For testing, remove it
-    var jsonStr = '[{"order_id" : "001","product" : "Product 1","broker" : "Broker 1","period" : "Period 2", "price" : "12.5","quantity" : "20","action" : "Buy","dealer" : "user1", "deal_trader" : "Trader 1", "purchaser" : "user2" , "purchase_trader"  : "Trader 2", "status" : "Pending","time" : "2014-2-2"},{"order_id" : "002","product" : "Product 1","broker" : "Broker 2","period" : "Period 2", "price" : "14.5","quantity" : "10","action" : "Sell","dealer" : "user1", "deal_trader" : "Trader 1", "purchaser" : "user2" , "purchase_trader"  : "Trader 2", "status" : "Deal","time" : "2012-2-2"}]';
-
     var orderParsed = [];
     var itemsPerPage = getItemsPerPage();
     $(document).ready(function (event) {
-        var arr = JSON.parse(jsonStr);
-        var buttonCount = 0;
-        console.log(arr);
+        setUsernameLabel();
         loadOrders();
 
         function loadOrders() {
+            var userName = getCookie("username");
             var depth = getCookie('depth') === "" ? 5 : getCookie('depth');
             $.ajax({
                 type: "GET",
                 dataType: "json",
                 url: "http://localhost:8080/getMyOrders",
-                data: {},
+                data: {
+                    username : userName
+                },
                 success: function (data) {
                     orderParsed = data;
 
@@ -239,12 +234,6 @@
                 },
                 error: function (data) {
                     hintError("Cannot load page data.");
-                    //TODO: For testing, remove it.
-                    orderParsed = JSON.parse(jsonStr);
-
-                    //Setup page selector
-                    loadPageButtons();
-                    loadOrderTable(1);
                 }
             });
         }
@@ -253,6 +242,10 @@
             var lenArr = orderParsed.length;
             $("#myOrders").find('tbody').empty();
             for (var i = (pageNum - 1) * itemsPerPage; i < pageNum * itemsPerPage; i++) {
+                if(i >= lenArr){
+                    break;
+                }
+
                 var obj = orderParsed[i];
 
                 var buttonStr = "";
@@ -263,14 +256,12 @@
                         .append($('<tr>')
                                 .append($('<td>').text(obj.id).attr("class", "orderID"))
                                 .append($('<td>').text(obj.productname))
-                                .append($('<td>').text(obj.broker))
+                                .append($('<td>').text(obj.broker).attr("class", "orderBroker"))
                                 .append($('<td>').text(obj.period))
                                 .append($('<td>').text(obj.price))
                                 .append($('<td>').text(obj.amount))
                                 .append($('<td>').text(obj.initiatorType))
-                                .append($('<td>').text(obj.initiatorType === "buy" ? obj.completionUser : obj.initiatorUser ))
                                 .append($('<td>').text(obj.initiatorType === "buy" ? obj.completionTrader : obj.initiatorTrader ))
-                                .append($('<td>').text(obj.initiatorType === "sell" ? obj.completionUser : obj.initiatorUser ))
                                 .append($('<td>').text(obj.initiatorType === "sell" ? obj.completionTrader : obj.initiatorTrader ))
                                 .append($('<td>').text(obj.status))
                                 .append($('<td>').text(obj.date_))
@@ -290,13 +281,15 @@
         $("#myOrders").on('click', '.cancelOrder', function () {
 
             var thisElement = $(this);
+            var broker = thisElement.parent().siblings(".orderBroker").text();
             var orderID = thisElement.parent().siblings(".orderID").text();
             $.ajax({
                 type: "GET",
                 dataType: "json",
                 url: "http://localhost:8080/cancelOrder",
                 data: {
-                    order_ID: orderID
+                    order_ID: orderID,
+                    brokerName : broker
                 },
                 success: function (data) {
                     if(data.status === "success"){
@@ -321,17 +314,19 @@
 
         })
                 .on('click', '.orderID', function () {
-                    showOrderDetail($(this).text());
+                    var broker = $(this).siblings(".orderBroker").text();
+                    showOrderDetail($(this).text(), broker);
                 });
 
         //Show orders for the same transaction
-        function showOrderDetail(orderId) {
+        function showOrderDetail(orderId, broker) {
             $.ajax({
                 type: "GET",
                 dataType: "json",
                 url: "http://localhost:8080/getOrderDetail",
                 data: {
-                    orderID : orderId
+                    orderID : orderId ,
+                    brokerName : broker
                 },
                 success: function (data) {
                     var arr = data;
@@ -347,9 +342,7 @@
                                         .append($('<td>').text(obj.price))
                                         .append($('<td>').text(obj.amount))
                                         .append($('<td>').text(obj.initiatorType))
-                                        .append($('<td>').text(obj.initiatorType === "buy" ? obj.completionUser : obj.initiatorUser ))
                                         .append($('<td>').text(obj.initiatorType === "buy" ? obj.completionTrader : obj.initiatorTrader ))
-                                        .append($('<td>').text(obj.initiatorType === "sell" ? obj.completionUser : obj.initiatorUser ))
                                         .append($('<td>').text(obj.initiatorType === "sell" ? obj.completionTrader : obj.initiatorTrader ))
                                         .append($('<td>').text(obj.status))
                                         .append($('<td>').text(obj.date_))
@@ -359,31 +352,6 @@
                 },
                 error: function (data) {
                     hintError("Cannot connect to server.");
-                    /*
-                    var arr = JSON.parse(jsonStr);
-
-                    var lenArr = arr.length;
-                    for (var i = 0; i < lenArr; i++) {
-                        var obj = arr[i];
-                        $("#orderInfoTable").find('tbody')
-                                .append($('<tr>')
-                                        .append($('<td>').text(obj.id))
-                                        .append($('<td>').text(obj.product))
-                                        .append($('<td>').text(obj.broker))
-                                        .append($('<td>').text(obj.period))
-                                        .append($('<td>').text(obj.price))
-                                        .append($('<td>').text(obj.quantity))
-                                        .append($('<td>').text(obj.action))
-                                        .append($('<td>').text(obj.dealer))
-                                        .append($('<td>').text(obj.deal_trader))
-                                        .append($('<td>').text(obj.purchaser))
-                                        .append($('<td>').text(obj.purchase_trader))
-                                        .append($('<td>').text(obj.status))
-                                        .append($('<td>').text(obj.time))
-                        );
-
-                    }
-                   */
                 }
             });
             $("#showOrder").modal('show');

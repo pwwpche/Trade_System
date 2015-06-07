@@ -148,7 +148,9 @@
             var password=$("#password").val();
             var email=$("#email").val();
             var level = $("#level").text();
-            if(username == "" || password =="" || name=="" || !$.isNumeric(level)) {
+            var emailPattern = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+            var emailCheck = emailPattern.test(email);
+            if(username == "" || password =="" || !emailCheck || !$.isNumeric(level)) {
                 alert("Please complete registration information");
                 return false;
             }
@@ -166,7 +168,7 @@
                 success : function(e){
                     if(e.status === "OK"){
                         alert("Registration complete.");
-                        window.location.href = "Signup.html";
+                        window.location.href = "index.html";
                     }else if(e.status === "duplicated"){
                         alert("Username is duplicated.");
                     }else{
