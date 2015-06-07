@@ -99,9 +99,9 @@
                     <a class="btn btn-large" id="level" data-toggle="dropdown" style="width:90%">User Level<span
                             class="caret"></span></a>
                     <ul class="dropdown-menu" id="levelMenu" style="width:100%">
-                        <li><a class="selectLevel">5</a></li>
-                        <li><a class="selectLevel">10</a></li>
-                        <li><a class="selectLevel">20</a></li>
+                        <li><a class="selectLevel">0</a></li>
+                        <li><a class="selectLevel">1</a></li>
+                        <li><a class="selectLevel">2</a></li>
                     </ul>
                 </div>
             </div> <!-- /login-fields -->
@@ -156,7 +156,7 @@
             $.ajax({
                 type : "POST",
                 url : "http://localhost:8080/register",
-                datatype : "json",
+                dataType : "json",
                 data : {
                     username : username,
                     password : password,
@@ -197,16 +197,13 @@
             }
             $.ajax({
                 type : "POST",
-                url : "http://localhost:8080/register",
-                datatype: "json",
+                url : "http://localhost:8080/checkExist",
+                dataType: "json",
                 data : {
-                    username : thisUsername,
-                    password : "",
-                    email : "",
-                    level : ""
+                    username : thisUsername
                 },
                 success : function(msg){
-                    if(res.status === "duplicated"){
+                    if(msg.status === "duplicated"){
                         alert("Username is occupied.");
                         $("#comfirm-register").attr("disabled", true);
                     }else{

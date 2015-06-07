@@ -137,6 +137,7 @@
                                     </div>
                                     <!-- /control-group -->
 
+
                                     <div class="control-group">
                                         <label class="control-label">Operation</label>
 
@@ -237,6 +238,23 @@
 
 
                                 <div class="control-group">
+                                    <label class="control-label">Category</label>
+
+                                    <div class="controls">
+                                        <div class="btn-group">
+                                            <a class="btn btn-small categoryName" data-toggle="dropdown" id="categoryName">Select
+                                                category<span
+                                                        class="caret"></span></a>
+                                            <ul class="dropdown-menu categoryMenu" id="marketCategoryMenu">
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <!-- /controls -->
+                                </div>
+                                <!-- /control-group -->
+
+
+                                <div class="control-group">
                                     <label class="control-label">Product</label>
 
                                     <div class="controls">
@@ -267,6 +285,8 @@
                                     <!-- /controls -->
                                 </div>
                                 <!-- /control-group -->
+
+
                             </fieldset>
                         </form>
                     </div>
@@ -366,7 +386,7 @@
                             <h3>Market</h3>
 
                             <h3 class="btn-group">
-                                <a class="btn btn-small" style="top:5px" data-toggle="dropdown" id="changeMarketOptions">Change Market Options</a>
+                                <a class="btn btn-small" style="top:5px" data-toggle="dropdown" id="changeMarketOptions">Product:Oil----Period:May30th----Broker:Broker1</a>
                             </h3>
                         </div>
                         <!-- /widget-header -->
@@ -456,12 +476,9 @@
 
         //Initialize product list and broker list
         loadBroker();
+        loadCategory();
         loadIceberg();
         $("#loadMarket").modal("show");
-
-
-
-
 
        $("#saveMarketOptions").click(function(){
            $("#loadMarket").modal("hide");
@@ -475,7 +492,21 @@
         //Fill in broker when pressing button
         $(".brokerMenu").on('click', ".selectBroker", function () {
             $(".brokerName").text($(this).text());
-            loadProduct();
+            var category = $("#categoryName").text();
+            var brokerName = $("#brokerName").text();
+            if(category.indexOf("Select") == -1 && brokerName.indexOf("Select") == -1){
+                loadProduct();
+            }
+        });
+
+        $(".categoryMenu").on('click', ".selectCategory", function () {
+            $(".categoryName").text($(this).text());
+            var category = $("#categoryName").text();
+            var brokerName = $("#brokerName").text();
+
+            if(category.indexOf("Select") == -1 && brokerName.indexOf("Select") == -1){
+                loadProduct();
+            }
         });
 
         //When new product is selected, pull marketDepth list
@@ -484,6 +515,7 @@
             //Get folds of current product
             loadPeriod();
         });
+
 
         //Fill in period when pressing button
         $(".periodMenu").on('click', ".selectPeriod", function () {
@@ -770,6 +802,7 @@
                 url: "http://localhost:8080/getProduct",
                 data: {
                     brokerName : brokerName
+
                 },
                 success: function (data) {
                     var arr = data;
@@ -806,6 +839,36 @@
                     hintError("Fail to load product list");
                     data = '[{"productid":1,"name":"Oil","period":"May30th","price":0},{"productid":2,"name":"Oil","period":"May29th","price":1000},{"productid":3,"name":"Gold","period":"May30th","price":0}]'
 
+                }
+            });
+        }
+
+        function loadCategory(){
+            var username = getCookie("username");
+            //Load category list
+            $.ajax({
+                //TODO : URL is not valid.
+                type: "GET",
+                dataType: "json",
+                url: "http://localhost:8080/getCategory",
+                data: {
+                    username :username
+                },
+                success: function (data) {
+                    var arr = data;
+                    var len = arr.length;
+                    $(".categoryMenu").empty();
+                    for (var i = 0; i < len; i++) {
+                        $(".categoryMenu").append(
+                                $("<li>").append(
+                                        $("<a>").attr("class", "selectCategory")
+                                                .text(arr[i].name)
+                                )
+                        );
+                    }
+                },
+                error: function (data) {
+                    hintError("Fail to load broker list");
                 }
             });
         }
