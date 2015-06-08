@@ -64,6 +64,8 @@ function getItemsPerPage(){
 
 function setUsernameLabel(){
     var username = getCookie("username");
+	window.setInterval(heartBeat, 10000);
+	
     if(username === ""){
         username = "Please log in";
         //window.location.href = "index.html";
@@ -83,4 +85,19 @@ function setUsernameLabel(){
         });
         window.location.href = "index.html";
     });
+}
+
+function heartBeat(){
+    var username = getCookie("username");
+	$.ajax({
+        type : "POST",
+        url : "http://localhost:8080/heartBeat",
+        dataType: "json",
+        data : {
+            username : username
+        },
+        success : function(msg) {},
+        error : function(){}
+		
+	});
 }

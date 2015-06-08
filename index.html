@@ -82,6 +82,11 @@
 			
 			<div class="login-actions">
 
+				<span class="login-checkbox">
+					<input id="useArtibage" name="Field" type="checkbox" class="field login-checkbox" tabindex="4">
+					<label class="choice" for="useArtibage">Use artibage</label>
+				</span>
+
 				<button id="loginButton" class="button btn btn-success btn-large">Log In</button>
 				
 			</div> <!-- .actions -->
@@ -116,14 +121,15 @@
 			//event.preventDefault();
 			var username =  $("#username").val();
 			var password = $("#password").val();
-
+			var useArtibage = $("#useArtibage").prop('checked');
 			$.ajax({
 				type : "POST",
 				url : "http://localhost:8080/login",
 				dataType: "json",
 				data : {
 					username : username,
-					password : password
+					password : password,
+					artibage : useArtibage
 				},
 				success : function(msg){
 					var status = msg.status;
