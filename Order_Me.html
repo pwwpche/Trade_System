@@ -115,7 +115,6 @@
                             </table>
                         </div>
                         <div class="form-actions" id="pageDiv">
-                            <!-- TODO: Add Page Selection-->
                             <button class="btn btn-primary" data-toggle="modal" id="buttonPrev">Prev</button>
                             <button class="btn btn-primary" data-toggle="modal" id="buttonNext">Next</button>
                         </div>
@@ -206,7 +205,6 @@
 <script src="js/base.js"></script>
 <script src="js/commonFunc.js"></script>
 <script>
-    //TODO: For testing, remove it
     var orderParsed = [];
     var itemsPerPage = getItemsPerPage();
     $(document).ready(function (event) {
@@ -395,7 +393,6 @@
             $("#myOrders").find("tbody").find('tr').remove();
             $(".pageSelect:disabled").removeAttr('disabled');
             $(".pageSelect:contains(" + newIdx + ")").attr('disabled', "");
-            //TODO: Load page content for new page
             loadOrderTable(newIdx);
         }
     });

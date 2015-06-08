@@ -113,7 +113,7 @@
 	$(document).ready(function(){
 
 		$("#loginButton").click(function(event){
-			event.preventDefault();
+			//event.preventDefault();
 			var username =  $("#username").val();
 			var password = $("#password").val();
 
@@ -151,10 +151,9 @@
 				},
 				error: function(){
 					alert("ajax error");
-					//TODO: For testing, delete this line
-					setCookie("username", username);
 				}
 			});
+			return false;
 		});
 	});
 </script>

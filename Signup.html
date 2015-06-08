@@ -67,7 +67,7 @@
 
     <div class="content clearfix">
 
-        <form action="#" method="post">
+        <form>
 
             <h1>Signup for Free Account</h1>
 
@@ -157,7 +157,7 @@
 
             $.ajax({
                 type : "POST",
-                url : "http://localhost:8080/register",
+                url : "http://localhost:8080/login",
                 dataType : "json",
                 data : {
                     username : username,
@@ -165,26 +165,21 @@
                     email : email,
                     level : level
                 },
-                success : function(e){
+                success:function(e){
                     if(e.status === "OK"){
                         alert("Registration complete.");
-                        window.location.href = "index.html";
+                        window.location.assign("index.html");
                     }else if(e.status === "duplicated"){
                         alert("Username is duplicated.");
                     }else{
                         alert(e.msg);
                     }
-
                 },
-                error : function(errorMsg){
-                    if(errorMsg.status === "error"){
-                        alert("Something was wrong.");
-                    }else if (errorMsg.status === "duplicated"){
-                        alert("Username is duplicated.");
-                    }
+                error:function(){
+                    alert("Server error.");
                 }
             });
-
+            return false;
         });
 
         $("#levelMenu").on("click", ".selectLevel", function(){

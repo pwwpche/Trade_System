@@ -236,6 +236,23 @@
                                 </div>
                                 <!-- /control-group -->
 
+                                <div class="control-group">
+                                    <label class="control-label">Product</label>
+
+                                    <div class="controls">
+                                        <div class="btn-group">
+                                            <a class="btn btn-small productName" data-toggle="dropdown" id="marketProductName">Select
+                                                Product<span
+                                                        class="caret"></span></a>
+                                            <ul class="dropdown-menu productMenu" id="marketProductMenu">
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <!-- /controls -->
+                                </div>
+                                <!-- /control-group -->
+
+
 
                                 <div class="control-group">
                                     <label class="control-label">Category</label>
@@ -246,23 +263,6 @@
                                                 category<span
                                                         class="caret"></span></a>
                                             <ul class="dropdown-menu categoryMenu" id="marketCategoryMenu">
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <!-- /controls -->
-                                </div>
-                                <!-- /control-group -->
-
-
-                                <div class="control-group">
-                                    <label class="control-label">Product</label>
-
-                                    <div class="controls">
-                                        <div class="btn-group">
-                                            <a class="btn btn-small productName" data-toggle="dropdown" id="marketProductName">Select
-                                                Product<span
-                                                        class="caret"></span></a>
-                                            <ul class="dropdown-menu productMenu" id="marketProductMenu">
                                             </ul>
                                         </div>
                                     </div>
@@ -464,7 +464,8 @@
 <script src="js/commonFunc.js"></script>
 <script>
     var productList = [];
-    var productId = {};
+    var categoryList = [];
+    var categoryList = [];
     var buttonCnt = 0;
     var bidArray = [];
     var askArray = [];
@@ -476,14 +477,15 @@
 
         //Initialize product list and broker list
         loadBroker();
-        loadCategory();
         loadIceberg();
         $("#loadMarket").modal("show");
 
        $("#saveMarketOptions").click(function(){
            $("#loadMarket").modal("hide");
+           setInterval(loadMarket, 1000);
            loadMarket();
        });
+
 
         $("#changeMarketOptions").click(function(){
             $("#loadMarket").modal("show");
@@ -492,21 +494,14 @@
         //Fill in broker when pressing button
         $(".brokerMenu").on('click', ".selectBroker", function () {
             $(".brokerName").text($(this).text());
-            var category = $("#categoryName").text();
             var brokerName = $("#brokerName").text();
-            if(category.indexOf("Select") == -1 && brokerName.indexOf("Select") == -1){
+            if(brokerName.indexOf("Select") == -1){
                 loadProduct();
             }
         });
 
         $(".categoryMenu").on('click', ".selectCategory", function () {
             $(".categoryName").text($(this).text());
-            var category = $("#categoryName").text();
-            var brokerName = $("#brokerName").text();
-
-            if(category.indexOf("Select") == -1 && brokerName.indexOf("Select") == -1){
-                loadProduct();
-            }
         });
 
         //When new product is selected, pull marketDepth list
@@ -673,10 +668,9 @@
 
 
         function loadMarket() {
-            $("#marketDepthTable").find('tbody').empty();
+            console.log("loadMarket");
             bidArray = [];
             askArray = [];
-            //TODO: For testing, remove it
 
             //Get max market depth by cookie
             var maxDepth = 5;
@@ -698,7 +692,6 @@
                     product: productName
                 },
                 success: function (data) {
-                    $("#changeMarketOptions").text("Product:" + productName);
                     askArray = data;
                     loadMarketContent();
                 },
@@ -733,6 +726,8 @@
             if(bidArray.length == 0 || askArray.length == 0){
                 return ;
             }
+            $("#marketDepthTable").find('tbody').empty();
+            $("#changeMarketOptions").text("Product:" + productName);
             var bidArr = bidArray;
             var askArr = askArray;
             var tableLen = bidArr.length > askArr.length ? bidArr.length : askArr.length;
@@ -797,46 +792,58 @@
         function loadProduct(){
             //Load Product list
             var brokerName = $("#brokerName").text();
-            var category = $("#categoryName").text();
             $.ajax({
                 type: "GET",
                 dataType: "json",
                 url: "http://localhost:8080/getProduct",
                 data: {
-                    brokerName : brokerName,
-                    category : category
+                    brokerName : brokerName
                 },
                 success: function (data) {
                     var arr = data;
                     productList = arr;
                     var len = arr.length;
                     var productUsed = [];
+                    var categoryUsed = [];
                     $(".productMenu").empty();
                     for (var i = 0; i < len; i++) {
                         //Whether this product has been appended
-                        var used = false;
+                        var usedProduct = false;
+                        var usedCategory = false;
                         for (var j = 0; j < productUsed.length; j++) {
                             if (productUsed[j] === arr[i].name) {
-                                used = true;
+                                usedProduct = true;
                                 break;
                             }
                         }
-                        if (used) {
-                            continue;
+                        for (var j = 0; j < categoryUsed.length; j++) {
+                            if (categoryUsed[j] === arr[i].category) {
+                                usedCategory = true;
+                                break;
+                            }
                         }
-                        //Append unused product to list
-                        $(".productMenu").append(
-                                $("<li>").append(
-                                        $("<a>").attr("class", "selectProduct")
-                                                .text(arr[i].name)
-                                )
-                        );
-                        productUsed.push(arr[i].name);
-                        productId[arr[i].name] = arr[i].id;
+                        if (!usedProduct) {
+                            //Append unused product to list
+                            $(".productMenu").append(
+                                    $("<li>").append(
+                                            $("<a>").attr("class", "selectProduct")
+                                                    .text(arr[i].name)
+                                    )
+                            );
+                            productUsed.push(arr[i].name);
+                        }
+                        if (!usedCategory) {
+                            //Append unused product to list
+                            $(".categoryMenu").append(
+                                    $("<li>").append(
+                                            $("<a>").attr("class", "selectCategory")
+                                                    .text(arr[i].category)
+                                    )
+                            );
+                            categoryUsed.push(arr[i].category);
+                        }
                     }
-
                 },
-
                 error: function (data) {
                     hintError("Fail to load product list");
                     data = '[{"productid":1,"name":"Oil","period":"May30th","price":0},{"productid":2,"name":"Oil","period":"May29th","price":1000},{"productid":3,"name":"Gold","period":"May30th","price":0}]'
@@ -845,41 +852,10 @@
             });
         }
 
-        function loadCategory(){
-            var username = getCookie("username");
-            //Load category list
-            $.ajax({
-                //TODO : URL is not valid.
-                type: "GET",
-                dataType: "json",
-                url: "http://localhost:8080/getCategory",
-                data: {
-                    username :username
-                },
-                success: function (data) {
-                    var arr = data;
-                    var len = arr.length;
-                    $(".categoryMenu").empty();
-                    for (var i = 0; i < len; i++) {
-                        $(".categoryMenu").append(
-                                $("<li>").append(
-                                        $("<a>").attr("class", "selectCategory")
-                                                .text(arr[i].name)
-                                )
-                        );
-                    }
-                },
-                error: function (data) {
-                    hintError("Fail to load broker list");
-                }
-            });
-        }
-
         function loadBroker(){
             var username = getCookie("username");
             //Load broker list
             $.ajax({
-                //TODO : URL is not valid.
                 type: "GET",
                 dataType: "json",
                 url: "http://localhost:8080/getBroker",
@@ -908,7 +884,6 @@
         function loadIceberg(){
             //Load iceberg method list
             $.ajax({
-                //TODO : URL is not valid.
                 type: "GET",
                 dataType: "json",
                 url: "http://localhost:8080/getIceberg",

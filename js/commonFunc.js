@@ -66,11 +66,21 @@ function setUsernameLabel(){
     var username = getCookie("username");
     if(username === ""){
         username = "Please log in";
-        window.location.href = "index.html";
+        //window.location.href = "index.html";
     }
     $("#userNameArea").html('<i class="icon-user"></i>' + username + '<b class="caret"></b>')
     $("a:contains(Logout)").click(function(){
         setCookie("username", "");
+        $.ajax({
+            type : "POST",
+            url : "http://localhost:8080/logout",
+            dataType: "json",
+            data : {
+                username : username
+            },
+            success : function(msg) {},
+            error : function(){}
+        });
         window.location.href = "index.html";
     });
 }

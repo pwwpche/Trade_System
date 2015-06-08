@@ -28,7 +28,6 @@
                     </li>
                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" id="userNameArea"><i
                             class="icon-user"></i> EGrappler.com <b class="caret"></b></a>
-                        <!--TODO : Change Username-->
                         <ul class="dropdown-menu">
                             <li><a href="index.html">Logout</a></li>
                         </ul>
@@ -348,7 +347,6 @@
                 },
                 success: function (data) {
                     hintSuccess("Query Complete.");
-                    //TODO : Provide data format
                     orderParsed = data;
                     loadPageButtons();
                     loadMyHistory(1);
@@ -356,10 +354,6 @@
                 },
                 error: function (data) {
                     hintError("Cannot connect to server");
-                    orderParsed = JSON.parse(jsonStr);
-                    loadPageButtons();
-                    loadMyHistory(1);
-                    showGraph();
                 }
             });
         });
@@ -408,7 +402,6 @@
             }
             $(".pageSelect:disabled").removeAttr('disabled');
             $(".pageSelect:contains(" + newIdx + ")").attr('disabled', "");
-            //TODO: Load page content for new page
             loadMyHistory(newIdx);
 
         }
