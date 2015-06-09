@@ -531,8 +531,7 @@
             var brokerName = $("#brokerName").text();
             var period = $("#period").text();
             var quantity = $("#quantity").val();
-            quantity = parseInt(quantity);
-            var price = parseFloat($("#price").val()).toFixed(2);
+            var price = $("#price").val();
             var useIceberg = $("#icebergCheckbox").is(":checked") ? $("#icebergMethod").text() : "No";
 
             //Check if order is valid
@@ -551,12 +550,13 @@
                 return;
             }
 
-            if (quantity < 0 || !$.isNumeric(quantity)) {       //User entered a invalid quantity
+            var intReg = /^\d+$/;
+            if (quantity < 0 || !intReg.test(quantity)) {       //User entered a invalid quantity
                 hintError("Please enter a valid quantity.");
                 return;
             }
-
-            if (price < 0 || !$.isNumeric(price)) {       //User entered a invalid quantity
+            var priceReg = /^\d+(\.\d{1,2})?$/
+            if (price < 0 || !priceReg.test(price)) {       //User entered a invalid quantity
                 hintError("Please enter a valid price.");
                 return;
             }
@@ -699,6 +699,7 @@
                 },
                 error: function (data) {
                     askArray = JSON.parse(askStr_test);
+                    window.clearInterval(loadMarket);
                     hintError("Fail to load fold list");
                 }
             });
@@ -719,9 +720,11 @@
                 },
                 error: function (data) {
                     bidArray = JSON.parse(bidStr_test);
+                    window.clearInterval(loadMarket);
                     hintError("Fail to load fold list");
                 }
             });
+            return false;
         }
 
         function loadMarketContent(){
