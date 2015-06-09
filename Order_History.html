@@ -311,7 +311,17 @@
                 .on('click', '.addCondition', function () {
                     addSearchCondition();
                 }).on('click', '.conditions', function () {
-                    $(this).parent().parent().parent().children(".SearchCondition").text($(this).text());
+                    var currentCondition = $(this).text();
+                    var valid = true;
+                    $(".SearchCondition").each(function () {
+                        if($(this).text() === currentCondition){
+                            valid = false;
+                        }
+                    });
+                    if(valid){
+                        $(this).parent().parent().parent().children(".SearchCondition").text(currentCondition);
+                    }
+
                 })
                 .on('click', 'input[type=text]', function () {
                     $(this).val("");
@@ -327,14 +337,27 @@
                 strings.push($(this).val());
             });
             var sendCondition = [];
+            var broker = "";
+            var product = "";
+            var period = "";
+
             for (var i = 1; i < conditions.length; i++) {
                 if (conditions[i] != null && conditions[i].length > 0 &&
                         strings[i] != null && strings[i].length > 0) {
-                    var pair = {
-                        condition: conditions[i],
-                        queryString: strings[i]
-                    };
-                    sendCondition.push(pair);
+                    var queryString = strings[i];
+                    switch(conditions[i]){
+                        case "Product":
+                            product = queryString ;
+                            break ;
+                        case "Broker":
+                            broker = queryString ;
+                            break ;
+                        case "Period":
+                            period = queryString ;
+                            break ;
+                        default :
+                            break;
+                    }
                 }
             }
 
@@ -343,7 +366,9 @@
                 dataType: "json",
                 url: "http://localhost:8080/searchHistory",
                 data: {
-                    data: JSON.stringify(sendCondition)
+                    broker: broker,
+                    product : product,
+                    period : period
                 },
                 success: function (data) {
                     hintSuccess("Query Complete.");

@@ -126,7 +126,7 @@
 
                                         <div class="controls">
                                             <div class="btn-group">
-                                                <a class="btn btn-small period" data-toggle="dropdown" id="period">Select
+                                                <a class="btn btn-small periodName" data-toggle="dropdown" id="period">Select
                                                     Period<span
                                                             class="caret"></span></a>
                                                 <ul class="dropdown-menu periodMenu" id="periodMenu">
@@ -235,6 +235,22 @@
                                     <!-- /controls -->
                                 </div>
                                 <!-- /control-group -->
+                                <div class="control-group">
+                                    <label class="control-label">Category</label>
+
+                                    <div class="controls">
+                                        <div class="btn-group">
+                                            <a class="btn btn-small categoryName" data-toggle="dropdown" id="categoryName">Select
+                                                category<span
+                                                        class="caret"></span></a>
+                                            <ul class="dropdown-menu categoryMenu" id="marketCategoryMenu">
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <!-- /controls -->
+                                </div>
+                                <!-- /control-group -->
+
 
                                 <div class="control-group">
                                     <label class="control-label">Product</label>
@@ -253,29 +269,12 @@
                                 <!-- /control-group -->
 
 
-
-                                <div class="control-group">
-                                    <label class="control-label">Category</label>
-
-                                    <div class="controls">
-                                        <div class="btn-group">
-                                            <a class="btn btn-small categoryName" data-toggle="dropdown" id="categoryName">Select
-                                                category<span
-                                                        class="caret"></span></a>
-                                            <ul class="dropdown-menu categoryMenu" id="marketCategoryMenu">
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <!-- /controls -->
-                                </div>
-                                <!-- /control-group -->
-
                                 <div class="control-group">
                                     <label class="control-label">Period</label>
 
                                     <div class="controls">
                                         <div class="btn-group">
-                                            <a class="btn btn-small period" data-toggle="dropdown" id="marketPeriod">Select
+                                            <a class="btn btn-small periodName" data-toggle="dropdown" id="marketPeriod">Select
                                                 Period<span
                                                         class="caret"></span></a>
                                             <ul class="dropdown-menu periodMenu" id="marketPeriodMenu">
@@ -478,7 +477,11 @@
         //Initialize product list and broker list
         loadBroker();
         loadIceberg();
+
+
         $("#loadMarket").modal("show");
+
+
 
        $("#saveMarketOptions").click(function(){
            $("#loadMarket").modal("hide");
@@ -495,13 +498,18 @@
         $(".brokerMenu").on('click', ".selectBroker", function () {
             $(".brokerName").text($(this).text());
             var brokerName = $("#brokerName").text();
-            if(brokerName.indexOf("Select") == -1){
+            if(brokerName.indexOf("Select") === -1){
                 loadProduct();
+                $(".productName").prop('disabled', true);
+                $(".periodName").prop('disabled', true);
             }
         });
 
         $(".categoryMenu").on('click', ".selectCategory", function () {
             $(".categoryName").text($(this).text());
+			loadProduct();
+            $(".productName").text("Select Product").prop('disabled', false);
+            $(".periodName").text("Select Period").prop('disabled', false);
         });
 
         //When new product is selected, pull marketDepth list
@@ -514,7 +522,7 @@
 
         //Fill in period when pressing button
         $(".periodMenu").on('click', ".selectPeriod", function () {
-            $(".period").text($(this).text());
+            $(".periodName").text($(this).text());
             //Add data to fill-in table
         });
 
@@ -732,7 +740,7 @@
                 return ;
             }
             $("#marketDepthTable").find('tbody').empty();
-            $("#changeMarketOptions").text("Product:" + productName);
+            $("#changeMarketOptions").text("Product:" + $("#productName").text());
             var bidArr = bidArray;
             var askArr = askArray;
             var tableLen = bidArr.length > askArr.length ? bidArr.length : askArr.length;
@@ -777,7 +785,7 @@
         function loadPeriod() {
             //Clear previous list
             $(".periodMenu").empty();
-            $(".period").text("Select Period");
+            $(".periodName").text("Select Period");
             //Load period list
             var arr = productList;
             var len = arr.length;
@@ -794,9 +802,33 @@
             }
         }
 
+		function setCategory(category){
+			$(".selectProduct").each(function () {
+                var productCategory = getProductCategory($(this).text());
+				if(productCategory !== category){
+					$(this).remove();
+				}
+            });
+		}
+		
+		function getProductCategory(productName){
+			var productListLen = productList.length;
+			for(var i = 0 ; i < productListLen ; i++){
+				if(productList[i].name === productName){
+					return productList[i].category;
+				}
+			}
+			return "";
+		}
+		
         function loadProduct(){
             //Load Product list
             var brokerName = $("#brokerName").text();
+            var loadProducts = false;
+            var category = $("#categoryName").text();
+            if(category.indexOf("Select") === -1){
+                loadProducts = true;
+            }
             $.ajax({
                 type: "GET",
                 dataType: "json",
@@ -827,17 +859,19 @@
                                 break;
                             }
                         }
-                        if (!usedProduct) {
+                        if (!usedProduct && loadProducts) {
                             //Append unused product to list
-                            $(".productMenu").append(
-                                    $("<li>").append(
-                                            $("<a>").attr("class", "selectProduct")
-                                                    .text(arr[i].name)
-                                    )
-                            );
-                            productUsed.push(arr[i].name);
+                            if(category === arr[i].category){
+                                $(".productMenu").append(
+                                        $("<li>").append(
+                                                $("<a>").attr("class", "selectProduct")
+                                                        .text(arr[i].name)
+                                        )
+                                );
+                                productUsed.push(arr[i].name);
+                            }
                         }
-                        if (!usedCategory) {
+                        if (!usedCategory && !loadProducts) {
                             //Append unused product to list
                             $(".categoryMenu").append(
                                     $("<li>").append(
