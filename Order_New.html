@@ -531,7 +531,8 @@
             var brokerName = $("#brokerName").text();
             var period = $("#period").text();
             var quantity = $("#quantity").val();
-            var price = $("#price").val();
+            quantity = parseInt(quantity);
+            var price = parseFloat($("#price").val()).toFixed(2);
             var useIceberg = $("#icebergCheckbox").is(":checked") ? $("#icebergMethod").text() : "No";
 
             //Check if order is valid
@@ -587,7 +588,8 @@
             var brokerName = $("#brokerName").text();
             var period = $("#period").text();
             var quantity = $("#quantity").val();
-            var price = $("#price").val();
+            quantity = parseInt(quantity);
+            var price = parseFloat($("#price").val()).toFixed(2);
             var useIceberg = $("#icebergCheckbox").is(":checked");
 
             //Send order to DB
