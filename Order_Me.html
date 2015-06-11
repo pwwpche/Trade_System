@@ -81,9 +81,10 @@
                                     <th> Price</th>
                                     <th> Fee</th>
                                     <th> Quantity</th>
-                                    <th> Action</th>
-                                    <th> Dealer</th>
-                                    <th> Purchaser</th>
+                                    <th> Init Action</th>
+                                    <th> Complete Action</th>
+                                    <th> Init User</th>
+                                    <th> Complete User</th>
                                     <th> Status</th>
                                     <th> Time</th>
                                     <th class="td-actions">Cancel</th>
@@ -145,9 +146,6 @@
                                 <th> Price</th>
                                 <th> Fee </th>
                                 <th> Quantity</th>
-                                <th> Action</th>
-                                <th> Dealer</th>
-                                <th> Purchaser</th>
                                 <th> Status</th>
                                 <th> Time</th>
                             </tr>
@@ -261,9 +259,10 @@
                                 .append($('<td>').text(obj.price))
                                 .append($('<td>').text(calculateFee(obj.price, obj.amount, obj.fee)))
                                 .append($('<td>').text(obj.amount))
-                                .append($('<td>').text(obj.initiatorType))
-                                .append($('<td>').text(obj.initiatorType === "buy" ? obj.completionTrader : obj.initiatorTrader ))
-                                .append($('<td>').text(obj.initiatorType === "sell" ? obj.completionTrader : obj.initiatorTrader ))
+                                .append($('<td>').text(obj.initAction))
+                                .append($('<td>').text(obj.cmpAction))
+                                .append($('<td>').text(obj.initUserId))
+                                .append($('<td>').text(obj.cmpUserId))
                                 .append($('<td>').text(obj.status))
                                 .append($('<td>').text(obj.date_))
                                 .append($('<td>').html(buttonStr))
@@ -344,9 +343,6 @@
                                         .append($('<td>').text(obj.price))
                                         .append($('<td>').text(calculateFee(obj.price, obj.amount, obj.fee)))
                                         .append($('<td>').text(obj.amount))
-                                        .append($('<td>').text(obj.initiatorType))
-                                        .append($('<td>').text(obj.initiatorType === "buy" ? obj.completionTrader : obj.initiatorTrader ))
-                                        .append($('<td>').text(obj.initiatorType === "sell" ? obj.completionTrader : obj.initiatorTrader ))
                                         .append($('<td>').text(obj.status))
                                         .append($('<td>').text(obj.date_))
                         );

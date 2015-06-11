@@ -242,7 +242,7 @@
             var timeList = [];
 
             for(var i = 0 ; i < orderParsed.length ; i++){
-                priceList.push(parseFloat(orderParsed[i].price) / parseInt(orderParsed[i].amount));
+                priceList.push(parseFloat(orderParsed[i].price) / parseInt(orderParsed[i].amount) / 100.0);
                 timeList.push(orderParsed[i].date_);
             }
             /*
@@ -266,7 +266,7 @@
                 }
                 data.push([timeList[i], priceList[i]]);
             }
-
+			$("#graph").empty();
             $.jqplot("graph", [data], {
                 title: 'Time-Price Curve',
                 axes: {

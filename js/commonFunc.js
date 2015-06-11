@@ -24,6 +24,16 @@ function calculateFee(price, amount, fee){
 }
 
 function hintSuccess(str) {
+    var used = false;
+    $(".alert-success").each(function(){
+        if($(this).html().indexOf(str) !== -1){
+            used = true;
+        }
+    });
+    if(used){
+        return ;
+    }
+
     $("#mainContainer").prepend($("<div>")
         .attr("class", "alert alert-success")
         .html('<button type="button" class="close" ' +
