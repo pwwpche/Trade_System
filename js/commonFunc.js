@@ -2,12 +2,25 @@
  * Created by pwwpche on 2015/5/29.
  */
 function hintError(str) {
+    var used = false;
+    $(".alert-error").each(function(){
+        if($(this).html().indexOf(str) !== -1){
+            used = true;
+        }
+    });
+    if(used){
+        return ;
+    }
     $("#mainContainer").prepend($("<div>")
         .attr("class", "alert alert-error")
         .html('<button type="button" class="close" ' +
         'data-dismiss="alert">×</button><i class="icon-remove">' +
         '</i>  ' + str))
         .show();
+}
+
+function calculateFee(price, amount, fee){
+    return parseInt(amount) * parseFloat(price) * parseFloat(fee) / 10000;
 }
 
 function hintSuccess(str) {

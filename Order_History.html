@@ -131,6 +131,7 @@
                                     <th> Broker</th>
                                     <th> Period</th>
                                     <th> Price</th>
+                                    <th> Fee</th>
                                     <th> Quantity</th>
                                     <th> Dealer</th>
                                     <th> Purchaser</th>
@@ -226,6 +227,7 @@
                                 .append($('<td>').text(obj.broker))
                                 .append($('<td>').text(obj.period))
                                 .append($('<td>').text(obj.price).attr("class", "price"))
+                                .append($('<td>').text(calculateFee(obj.price, obj.amount, obj.fee)))
                                 .append($('<td>').text(obj.amount))
                                 .append($('<td>').text(obj.initiatorType === "buy" ? obj.completionTrader : obj.initiatorTrader ))
                                 .append($('<td>').text(obj.initiatorType === "sell" ? obj.completionTrader : obj.initiatorTrader ))

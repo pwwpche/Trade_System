@@ -79,6 +79,7 @@
                                     <th> Broker</th>
                                     <th> Period</th>
                                     <th> Price</th>
+                                    <th> Fee</th>
                                     <th> Quantity</th>
                                     <th> Action</th>
                                     <th> Dealer</th>
@@ -142,6 +143,7 @@
                                 <th> Broker</th>
                                 <th> Period</th>
                                 <th> Price</th>
+                                <th> Fee </th>
                                 <th> Quantity</th>
                                 <th> Action</th>
                                 <th> Dealer</th>
@@ -257,6 +259,7 @@
                                 .append($('<td>').text(obj.broker).attr("class", "orderBroker"))
                                 .append($('<td>').text(obj.period))
                                 .append($('<td>').text(obj.price))
+                                .append($('<td>').text(calculateFee(obj.price, obj.amount, obj.fee)))
                                 .append($('<td>').text(obj.amount))
                                 .append($('<td>').text(obj.initiatorType))
                                 .append($('<td>').text(obj.initiatorType === "buy" ? obj.completionTrader : obj.initiatorTrader ))
@@ -328,6 +331,7 @@
                 },
                 success: function (data) {
                     var arr = data;
+                    $("#orderInfoTable").find('tbody').empty();
                     var lenArr = arr.length;
                     for (var i = 0; i < lenArr; i++) {
                         var obj = arr[i];
@@ -338,6 +342,7 @@
                                         .append($('<td>').text(obj.broker))
                                         .append($('<td>').text(obj.period))
                                         .append($('<td>').text(obj.price))
+                                        .append($('<td>').text(calculateFee(obj.price, obj.amount, obj.fee)))
                                         .append($('<td>').text(obj.amount))
                                         .append($('<td>').text(obj.initiatorType))
                                         .append($('<td>').text(obj.initiatorType === "buy" ? obj.completionTrader : obj.initiatorTrader ))

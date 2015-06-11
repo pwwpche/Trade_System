@@ -569,6 +569,22 @@
                 return;
             }
 
+            if(useIceberg.indexOf("Select") !== -1){
+                hintError("Please select an iceberg method.");
+                return;
+            }
+
+            if(useIceberg.indexOf("Select") !== -1){
+                hintError("Please select an iceberg method.");
+                return;
+            }
+
+            if(useIceberg !== "No" && !intReg.test($("#icebergFolds").val())){
+                hintError("Please enter a valid iceberg fold.");
+                return;
+            }
+
+
             //Refresh order table
             $("#orderTable").find('tbody').empty()
                     .append($('<tr>')
@@ -681,7 +697,6 @@
             console.log("loadMarket");
             bidArray = [];
             askArray = [];
-
             //Get max market depth by cookie
             var maxDepth = 5;
             var depCookie = getCookie('depth');
@@ -707,7 +722,6 @@
                 },
                 error: function (data) {
                     askArray = JSON.parse(askStr_test);
-                    window.clearInterval(loadMarket);
                     hintError("Fail to load fold list");
                 }
             });
@@ -728,7 +742,6 @@
                 },
                 error: function (data) {
                     bidArray = JSON.parse(bidStr_test);
-                    window.clearInterval(loadMarket);
                     hintError("Fail to load fold list");
                 }
             });
@@ -736,7 +749,7 @@
         }
 
         function loadMarketContent(){
-            if(bidArray.length == 0 || askArray.length == 0){
+            if(bidArray.length == 0 && askArray.length == 0){
                 return ;
             }
             $("#marketDepthTable").find('tbody').empty();
@@ -755,7 +768,7 @@
                     trElem = trElem.append($('<td>').text($("#marketBrokerName").text()).attr("class", "bid_broker"))
                             .append($('<td>').text(bidArr[i].period).attr("class", "bid_period"))
                             .append($('<td>').text(bidArr[i].amount).attr("class", "bid_quantity"))
-                            .append($('<td>').text(bidArr[i].price).attr("class", "bid_price"))
+                            .append($('<td>').text(parseFloat(bidArr[i].price) / 100).attr("class", "bid_price"))
                             .append($('<td>').html('<a class="bidToOrder btn btn-mini btn-success"><i class="btn-icon-only icon-ok"> </i></a>').attr("class", "td-actions"));
                 } else {
                     trElem = trElem.append($('<td>'))
@@ -766,7 +779,7 @@
                 }
 
                 if (i < askArr.length) {
-                    trElem = trElem.append($('<td>').text(askArr[i].price).attr("class", "ask_price"))
+                    trElem = trElem.append($('<td>').text(parseFloat(askArr[i].price) / 100).attr("class", "ask_price"))
                             .append($('<td>').text(askArr[i].amount).attr("class", "ask_quantity"))
                             .append($('<td>').text(askArr[i].period).attr("class", "ask_period"))
                             .append($('<td>').text($("#marketBrokerName").text()).attr("class", "ask_broker"))
